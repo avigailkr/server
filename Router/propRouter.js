@@ -55,7 +55,7 @@ console.log(prop.adress)
     (${prop.price},${prop.city},'${prop.adress}',${prop.mr},
    ${prop.type},${prop.isSale},'${prop.InsertDate}',${prop.IdUser},${prop.showPrice},
     ${prop.floor},${prop.inFloor},${prop.room},true,${prop.sito},'${prop.discription}',
-    null,${prop.date}, ${prop.halfRoom},'${prop.added}','${prop.name}')`;
+    null,${prop.date}, ${prop.halfRoom},'${prop.added}','${prop.name}',true)`;
     //problem in added
     const result=await promiseQuery(query);
     res.send("add property is success!!!");
