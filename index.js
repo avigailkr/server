@@ -4,9 +4,6 @@ const express=require("express");
 const bodyparser=require("body-parser");
 const app=express();
 
-
-
-
 //ייבוא הראוטרים
 const userrouter=require("./Router/userRouter");
 const proprouter=require("./Router/propRouter");

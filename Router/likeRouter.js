@@ -14,10 +14,10 @@ likeRouter.get("/getPropLikeById/:id/:idprop",async (req,res)=>{
         res.send(e.sqlMessage)
 }})
 
-//שליפת כל הדירות שאהבתי
+//שליפת כל הדירות שאהבתי 
 likeRouter.get("/getAllLikeById/:id",async (req,res)=>{
-    try{
-    const query=`SELECT p.Id,Price,IdCity,Adress,Sqm,Mmd,IdKindProp,IdTypeSale,InsertDate,Floor,IdUser,ShowPrice,InFloor,RoomNum,Active,IdStatus,Description,ImgUrl,IdEnterDate,IsSaleOrRent,UpdateDate,LastDateSaleOrRent,LevelInterest FROM nadlan.property p right join nadlan.like l on p.Id=l.IdApartment 
+    try{                          
+    const query=`SELECT p.Id,Price,IdCity,Adress,Sqm,IdKindProp,IdTypeSale,InsertDate,Floor,IdUser,ShowPrice,InFloor,RoomNum,Active,IdStatus,Description,ImgUrl,IdEnterDate,HalfRoom, added, nameOwner,LevelInterest FROM nadlan.property p right join nadlan.like l on p.Id=l.IdApartment 
     where l.IdUserLike=${req.params.id}`;
     const rows= await promiseQuery(query);
     res.send(rows);}

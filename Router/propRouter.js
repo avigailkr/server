@@ -45,46 +45,22 @@ propRouter.put("/deleteProp/:id",async(req,res)=>{
     const result=await promiseQuery(query);
     res.send(result);
 })
-//הוספת דירה
 
+//הוספת דירה
 propRouter.post("/addProp",async (req,res)=>{
     const prop=req.body;
     console.log(prop)
-
-    // adress: "שלום עליכם 6"
-    // date:  "גמיש"
-    // fileName: "isaac-benhesed-1SbJCq-vHpI-unsplash.jpg"
-    // floor: "1"
-    // halfRoom:  true
-    // image:  "blob:http://localhost:3000/62c99542-e35c-4f81-aef1-8248889eb884"
-    // inFloor  : "1"
-    // mr: "1200"
-    // name :  "אביגיל"
-    // phoneNumber: 
-    // "054678665" plus
-    // :  {מרפסת: false, סורגים: true, ממ"ד: true, מחסן: false, מעלית: true, …}
-    // price :  "1000000"
-    //  rihut :  "ללא"
-    // room: "6"
-    // sito : "חדש"
-    // status: "rent"
-    // type: "דירה"
-
-
-// ,${prop.IdCity} ,${prop.plus}$ ,{prop.IdKindProp}  ,
-//  ${prop.ShowPrice},${prop.IdStatus}, '${prop.Description}',${prop.IdEnterDate}
-
-    const query=`INSERT INTO nadlan.property (Price, IdCity, Adress, Sqm, Mmd, IdKindProp, IdTypeSale, InsertDate, IdUser, ShowPrice, Floor, InFloor, RoomNum, Active, IdStatus, Description, ImgUrl, IdEnterDate) VALUES 
-    (${prop.price},${prop.city},'${prop.adress}',null,
-    ${prop.halfRoom},${prop.type},${prop.isSale},'${prop.InsertDate}',${prop.IdUser},${prop.showPrice},
-    ${prop.floor},${prop.inFloor},${prop.room},true,null,'${prop.discription}',
-    null,${prop.date})`;
-    // const query2=`SELECT  id FROM tasks.tasks WHERE tasks.desc='${task.desc}'`
-
+console.log(prop.adress)
+    const query=`INSERT INTO nadlan.property (Price, IdCity, Adress, Sqm, IdKindProp, IdTypeSale, InsertDate, IdUser, ShowPrice, Floor, InFloor, RoomNum, Active, IdStatus, Description, ImgUrl, IdEnterDate, HalfRoom, added, nameOwner,ActiveMyArea) VALUES 
+    (${prop.price},${prop.city},'${prop.adress}',${prop.mr},
+   ${prop.type},${prop.isSale},'${prop.InsertDate}',${prop.IdUser},${prop.showPrice},
+    ${prop.floor},${prop.inFloor},${prop.room},true,${prop.sito},'${prop.discription}',
+    null,${prop.date}, ${prop.halfRoom},'${prop.added}','${prop.name}')`;
+    //problem in added
     const result=await promiseQuery(query);
-    // const result2=await promiseQuery(query2);
     res.send("add property is success!!!");
 });
+
 //bring from sql all cityis
 propRouter.get("/getAllCityis", async (req, res)=>{
     try{
@@ -111,6 +87,7 @@ propRouter.get("/getAllCityis", async (req, res)=>{
     }
     })
     
+    //bring from sql status of property
     propRouter.get("/getStatus",async (req, res)=>{
      try{
      const query=`SELECT * FROM nadlan.status`
@@ -121,6 +98,21 @@ propRouter.get("/getAllCityis", async (req, res)=>{
     console.log(e)
     res.send(e.sqlMessage)
      }
+    })
+
+    //bring from sql property details
+    propRouter.get("/getDetailsProp/:id", async (req, res)=>{
+        try{
+            const id=req.params.id;
+            console.log(id);
+            const query=`SELECT * FROM nadlan.property WHERE Id=${id}`
+            const rows=await promiseQuery(query);
+            res.send(rows)
+        }
+        catch(e){
+            console.log(e)
+            res.send(e.sqlMessage)
+             }
     })
     
     
