@@ -1,7 +1,8 @@
 const {Router} = require('express');//ייבוא הראוטר ממודול אקספרס
 const propRouter=new Router();//יצירת מופע ממחלקת הראוטר
 
-const {promiseQuery}=require("../sql")//ייבוא של אובייקט שיודע לשלוח שאילתה
+//ייבוא של אובייקט שיודע לשלוח שאילתה
+const {promiseQuery}=require("../sql");
 
 //שליפת כל הדירות
 propRouter.get("/getAllPropertys",async (req,res)=>{
@@ -51,14 +52,20 @@ propRouter.post("/addProp",async (req,res)=>{
     const prop=req.body;
     console.log(prop)
 console.log(prop.adress)
-    const query=`INSERT INTO nadlan.property (Price, IdCity, Adress, Sqm, IdKindProp, IdTypeSale, InsertDate, IdUser, ShowPrice, Floor, InFloor, RoomNum, Active, IdStatus, Description, ImgUrl, IdEnterDate, HalfRoom, added, nameOwner,ActiveMyArea) VALUES 
+// (Price, IdCity, Adress, Sqm, IdKindProp, IdTypeSale, InsertDate, Floor, IdUser,ShowPrice, InFloor,  RoomNum, Active, IdStatus, Description,IdEnterDate,IsSaleOrRent,UpdateDate,LastDateSaleOrRent, ActiveMyArea, HalfRoom)
+    const query=`INSERT INTO nadlan.property (Price, IdCity, Adress, Sqm, IdKindProp, IdTypeSale, InsertDate, Floor, IdUser,ShowPrice, InFloor,  RoomNum, Active, IdStatus, Description,IdEnterDate,IsSaleOrRent,UpdateDate,LastDateSaleOrRent, ActiveMyArea, HalfRoom) VALUES 
     (${prop.price},${prop.city},'${prop.adress}',${prop.mr},
-   ${prop.type},${prop.isSale},'${prop.InsertDate}',${prop.IdUser},${prop.showPrice},
-    ${prop.floor},${prop.inFloor},${prop.room},true,${prop.sito},'${prop.discription}',
-    null,${prop.date}, ${prop.halfRoom},'${prop.added}','${prop.name}',true)`;
-    //problem in added
+   ${prop.type},${prop.isSale},'${prop.InsertDate}', ${prop.floor},${prop.IdUser},${prop.showPrice},
+   ${prop.inFloor},${prop.room},true,${prop.sito},'${prop.discription}',
+   ${prop.date}, false, NULL,NULL, false, ${prop.halfRoom})`;
+    
     const result=await promiseQuery(query);
-    res.send("add property is success!!!");
+ 
+    //שאילתא שמחזירה את האי די של הדירה האחרונה
+    const query2="select Id from nadlan.property ORDER BY Id DESC LIMIT 1"
+   const rows=await promiseQuery(query2);
+
+     res.send(rows);
 });
 
 //bring from sql all cityis
@@ -115,6 +122,18 @@ propRouter.get("/getAllCityis", async (req, res)=>{
              }
     })
     
+    // //bring from sql idProp of property
+    // propRouter.get("/getIdProp", async (req, res)=>{
+    //     try{
+    //         const query="select id from nadlan.property ORDER BY id DESC LIMIT 1"
+    //         const rows=await promiseQuery(query);
+    //         res.send(rows)
+    //     }
+    //     catch(e){
+    //         console.log(e)
+    //         res.send(e.sqlMessage)
+    //          }
+    // })
     
     // propRouter.put("/updateTask/:id",async (req,res)=>{
     //     const id=req.params.id;
