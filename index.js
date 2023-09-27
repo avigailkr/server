@@ -2,6 +2,8 @@ const cors=require("cors");
 //const io=require("socket.io");
 const express=require("express");
 const bodyparser=require("body-parser");
+const path = require('path');
+
 const app=express();
 
 //ייבוא הראוטרים
@@ -17,6 +19,9 @@ const filterRouter=require("./Router/filterRouter")
 app.use(cors());//מאפשר גישה מאתר לאתר
 app.use(bodyparser.json());//מקבל מידע ומחזיר כמחרוזת
 //app.use(express.static("html"));//clian של ה-htmlחשיפת קובץ   ה 
+// Serve the images folder as a static directory
+
+ app.use('/images', express.static(path.join(__dirname, 'images')));//גישה לתקיית התמונות
 
 const port=8080;
 const listener=app.listen(port,()=>{console.log("running server")});//תאזין ךפורט
@@ -68,4 +73,5 @@ app.use("/chat",chatrouter);
 app.use("/statistic",statisticRouter);
 app.use("/like",likeRouter);
 app.use("/img",imgRouter);
-app.use("/filter",filterRouter)
+app.use("/filter",filterRouter);
+

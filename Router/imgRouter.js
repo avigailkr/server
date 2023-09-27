@@ -1,5 +1,7 @@
 const {Router} = require('express');//ייבוא הראוטר ממודול אקספרס
 const imgRouter=new Router();//יצירת מופע ממחלקת הראוטר
+const path = require('path');
+
 
 const fs=require('fs');//ייבוא המודול 
 const multer = require("multer");
@@ -43,20 +45,23 @@ const storage = multer.diskStorage({
   
   const upload = multer({ storage: storage })
 
+//to 2 fils or more....
+// upload.fields(["image1", "image2"]), (req, res) => {
+//     // קבל את הנתיבים של הקבצים שהועלו
+//     const image1Name = req.file.image1.filename;
+//     const image2Name = req.file.image2.filename;
+
 
 //העלאת תמונה לSQL
 imgRouter.post("/uploadImage", upload.single("image"), async (req, res)=>{
     try{
     const id=parseInt(req.body.idProp)+1;
-     console.log(id)
+     console.log(req.body.idProp)
      const imageName=req.file.filename;
+     
     
-     const query=`INSERT INTO nadlan.image (Name, File) VALUES ('${imageName}','images/${imageName}')`
-     const result=await promiseQuery(query);
-     const query2="SELECT Id FROM nadlan.img ORDER BY Id DESC LIMIT 1"
-     const result2=await promiseQuery(query2);
-     console.log(result2[0].Id);
-     const query3=`INSERT INTO nadlan.images (IdProp, IdImg) VALUES (${id}, ${result2})`
+     const query=`INSERT INTO nadlan.images (IdProp, Name, File) VALUES (${id},'${imageName}','images/${imageName}')`
+     const rezult=await promiseQuery(query);
      res.send("uploaded!!!");
 }
 catch(e){
@@ -65,13 +70,7 @@ catch(e){
 }
 })
 
-//to 2 fils or more....
-// upload.fields(["image1", "image2"]), (req, res) => {
-//     // קבל את הנתיבים של הקבצים שהועלו
-//     const image1Name = req.file.image1.filename;
-//     const image2Name = req.file.image2.filename;
-
-imgRouter.put("updateIdImage", async (req, res)=>{
+imgRouter.put("/updateIdImage", async (req, res)=>{
   try{
     // const id=parseInt(req.body.idProp)+1;
     //  const imageName=req.file.filename;
@@ -79,11 +78,46 @@ imgRouter.put("updateIdImage", async (req, res)=>{
     //  const result=await promiseQuery(query);
     //  res.send("uploaded!!!");
 
-}
-catch(e){
+  }
+   catch(e){
     console.log(e)
     res.send(e.sqlMessage)
-}
+   }
 })
+
+
+imgRouter.get("/getAllImagesById/:id", async (req, res)=>{
+
+  try{
+   const query=`SELECT * FROM nadlan.images where IdProp=${req.params.id}`
+   const rezalt=await promiseQuery(query);
+   
+   const rez2=[];
+   rezalt.map((item,index)=>{
+    // console.log(item.Name);
+   const path=`images/${item.Name}`;
+  //  console.log(path);
+   rez2[index]=path;
+   })
+   
+   res.send(rezalt);
+  }
+  catch(e){
+    console.log(e)
+    res.send(e.sqlMessage)
+  }
+})
+
+//מביאה לי נתיב של התמונה
+imgRouter.get("/apiImage", (req, res) => {
+  const { imageName } = req.params;
+
+  const imagePath = path.join(__dirname,'images', imageName);
+
+  res.sendFile(imagePath);
+  
+});
+
+
 
 module.exports=imgRouter;
