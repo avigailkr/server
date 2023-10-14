@@ -44,12 +44,13 @@ chatRouter.post("/AddMass",async (req,res)=>{
 
 
 //הוספת חדר- פתיחת חדר לשיחה חדשה
+//מחזיר את מס החדר
 chatRouter.post("/addRoom",async (req,res)=>{ 
     const DetailsMass=req.body;
         try{
-        const query=`INSERT INTO nadlan.room (UserId1,UserId2,Private)  VALUES(${DetailsMass.id1},${DetailsMass.id2},True)`;
+        const query=`INSERT INTO nadlan.room (OwnerId,UserId,Private)  VALUES(${DetailsMass.owner},${DetailsMass.user},True)`;
         const result=await promiseQuery(query);
-        const query2=`SELECT Id FROM nadlan.room WHERE UserId1=${DetailsMass.id1} and UserId2=${DetailsMass.id2} or UserId1=${DetailsMass.id2} and UserId2=${DetailsMass.id1}`;
+        const query2=`SELECT Id FROM nadlan.room WHERE OwnerId=${DetailsMass.owner} and UserId=${DetailsMass.user}`;
     const result2= await promiseQuery(query2);
         res.send(result2);
     
@@ -64,9 +65,9 @@ chatRouter.post("/addRoom",async (req,res)=>{
 
 
 //שליפת חדר
-chatRouter.get("/getRoom/:id1/:id2",async (req,res)=>{
+chatRouter.get("/getRoom/:owner/:user",async (req,res)=>{
     try{
-    const query=`SELECT Id FROM nadlan.room WHERE UserId1=${req.params.id1} and UserId2=${req.params.id2} or UserId1=${req.params.id2} and UserId2=${req.params.id1}`;
+    const query=`SELECT Id FROM nadlan.room WHERE OwnerId=${req.params.owner} and UserId=${req.params.user}`;
     const rows= await promiseQuery(query);
     res.send(rows);}
     catch(e){
@@ -84,6 +85,33 @@ chatRouter.get("/getNameOwner/:id",async (req,res)=>{
         console.log(e)
         res.send(e.sqlMessage)
 }})
+
+//שליפת כל המשתמשים שהתכתבו עם בעל דירה מסויים
+chatRouter.get("/getAllMyClients/:ownerid",async(req,res)=>{
+    try{ 
+        const query=`select u.Id,u.Name,Mail,Phone,Active from nadlan.user u join nadlan.room r on u.Id=r.UserId
+        where r.OwnerId=${req.params.ownerid}`;
+        const rows= await promiseQuery(query);
+        console.log(rows)
+        res.send(rows);}
+        catch(e){
+            console.log(e)
+            res.send(e.sqlMessage)
+        }
+})
+//שליפת כל בעלי הדירות שמשתמש מסויים התכתב איתםם
+chatRouter.get("/getAllMyOwner/:userid",async(req,res)=>{
+        try{
+        const query=`select u.Id,u.Name,Mail,Phone,Active from nadlan.user u join nadlan.room r on u.Id=r.OwnerId
+        where r.UserId=${req.params.userid}`;
+        const rows= await promiseQuery(query);
+        console.log(rows)
+        res.send(rows);}
+        catch(e){
+            console.log(e)
+            res.send(e.sqlMessage)
+        }
+})
 module.exports=chatRouter;
 
 

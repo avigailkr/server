@@ -1,8 +1,7 @@
 const {Router} = require('express');//ייבוא הראוטר ממודול אקספרס
 const propRouter=new Router();//יצירת מופע ממחלקת הראוטר
 
-//ייבוא של אובייקט שיודע לשלוח שאילתה
-const {promiseQuery}=require("../sql");
+const {promiseQuery}=require("../sql")//ייבוא של אובייקט שיודע לשלוח שאילתה
 
 //שליפת כל הדירות
 propRouter.get("/getAllPropertys",async (req,res)=>{
@@ -17,7 +16,7 @@ propRouter.get("/getAllPropertys",async (req,res)=>{
 
 })
 //שליפת כל הדירות של משתמש מסויים
-propRouter.get("/getAllApartmentsByUserId/:id",async (req,res)=>{
+propRouter.get("/getAllPropsByUserId/:id",async (req,res)=>{
     try{
     const queryString=`SELECT * FROM  nadlan.property WHERE IdUser=${req.params.id}`;
     const rows= await promiseQuery(queryString);
@@ -36,8 +35,20 @@ propRouter.get("/getOwner/:id",async (req,res)=>{
         console.log(e)
         res.send(e.sqlMessage)
 }})
-//מחיקת דירה
-propRouter.put("/deleteProp/:id",async(req,res)=>{
+//העלאת מודעה
+//הפיכת הדירה לפעילה
+propRouter.put("/activeProp/:id",async(req,res)=>{
+    const id=req.params.id;
+    const query=`UPDATE nadlan.property SET
+    Active=True
+    WHERE Id=${id}
+`;
+    const result=await promiseQuery(query);
+    res.send(result);
+})
+//הסרת מודעה 
+//הפיכת הדירה ללא פעילה
+propRouter.put("/NotActiveProp/:id",async(req,res)=>{
     const id=req.params.id;
     const query=`UPDATE nadlan.property SET
     Active=False
@@ -46,6 +57,19 @@ propRouter.put("/deleteProp/:id",async(req,res)=>{
     const result=await promiseQuery(query);
     res.send(result);
 })
+
+//מחיקת דירה מהאזור האישי
+propRouter.put("/deleteProp/:id",async(req,res)=>{
+    const id=req.params.id;
+    const query=`UPDATE nadlan.property SET
+    ActiveMyArea=False
+    WHERE Id=${id}
+`;
+    const result=await promiseQuery(query);
+    res.send(result);
+})
+
+
 
 //הוספת דירה
 propRouter.post("/addProp",async (req,res)=>{

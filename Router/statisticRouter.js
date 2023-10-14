@@ -43,6 +43,7 @@ statisticRouter.get("/statisticCountProperty/:idcity/:idtypesale/:year",async(re
         const query=`select count(*) from nadlan.property where IdCity=${req.params.idcity} and IdTypeSale=${req.params.idtypesale} and year(LastDateSaleOrRent)='${req.params.year}'`
         const rows= await promiseQuery(query);
         console.log(rows.length)
+        let r=rows.length;
         res.send(rows)
     }
     catch(e){
