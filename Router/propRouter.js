@@ -145,6 +145,33 @@ propRouter.get("/getAllCityis", async (req, res)=>{
             res.send(e.sqlMessage)
              }
     })
+
+    propRouter.get("/getNameCity/:id",async (req, res)=>{
+        try{
+        const id=req.params.id;
+        const query=`SELECT Name FROM nadlan.city where Id=${id}`
+        const rows=await promiseQuery(query);
+        res.send(rows);
+        }
+        catch(e){
+       console.log(e)
+       res.send(e.sqlMessage)
+        }
+       })
+        
+       //פונקציה המקבלת קוד סוג הנכס ומחזירה את סוג הנכס 
+    propRouter.get("/getNameType/:id",async (req, res)=>{
+        try{
+        const id=req.params.id;
+        const query=`SELECT Name FROM nadlan.kindprop where Id=${id}`
+        const rows=await promiseQuery(query);
+        res.send(rows);
+        }
+        catch(e){
+       console.log(e)
+       res.send(e.sqlMessage)
+        }
+       })
     
     // //bring from sql idProp of property
     // propRouter.get("/getIdProp", async (req, res)=>{

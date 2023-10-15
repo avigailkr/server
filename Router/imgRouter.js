@@ -2,7 +2,6 @@ const {Router} = require('express');//ייבוא הראוטר ממודול אק�
 const imgRouter=new Router();//יצירת מופע ממחלקת הראוטר
 const path = require('path');
 
-
 const fs=require('fs');//ייבוא המודול 
 const multer = require("multer");
 
@@ -108,6 +107,22 @@ imgRouter.get("/getAllImagesById/:id", async (req, res)=>{
   }
 })
 
+
+imgRouter.get("/getAllImages", async (req, res)=>{
+
+    try{
+     const query=`SELECT * FROM nadlan.images`
+     const rezalt=await promiseQuery(query);
+     
+     
+     res.send(rezalt);
+    }
+    catch(e){
+      console.log(e)
+      res.send(e.sqlMessage)
+    }
+  })
+  
 //מביאה לי נתיב של התמונה
 imgRouter.get("/apiImage", (req, res) => {
   const { imageName } = req.params;
